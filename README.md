@@ -1,70 +1,52 @@
-# Rice Packer & Base Hyprland Rice
+# Universal Rice Packer
 
-This repository contains two major components for Linux ricing enthusiasts:
-1. **Rice Packer Tool**: A highly concurrent, cross-platform CLI tool built in Go for packaging, mapping, and distributing entire dotfile setups (rices).
-2. **Base Hyprland Rice**: A complete, modular, and ready-to-use Hyprland configuration template using Kitty, Waybar, Rofi, and modern Hyprland v0.55+ syntax.
+The Universal Rice Packer is a cross-platform CLI tool built in Go designed to solve the age-old "it works on my machine" problem for Linux dotfiles (rices). 
+
+Sharing and installing customized desktop environments is notoriously difficult due to differing hardware (monitors, GPUs) and missing software dependencies. This tool automates the process of packaging, mapping, and distributing entire dotfile setups so they work seamlessly on any target machine.
+
+## Why is this important?
+Traditionally, installing someone else's "rice" involves manually copying configuration files, hunting down missing fonts and dependencies, and rewriting monitor layouts to fit your physical screens. 
+
+The **Rice Packer** completely eliminates this friction by:
+- Creating a standardized `.rice` archive format.
+- Automatically mapping the creator's hardware (like monitor resolutions and GPU drivers) to the installer's hardware.
+- Resolving and prompting for missing system dependencies during installation.
+
+## How it Works
+1. **Manifest Parsing**: It reads a `manifest.toml` file that defines your config paths, required dependencies, and hardware mappings.
+2. **Hardware Translation**: When a rice is installed, the tool reads the target machine's hardware and translates the original config's monitor setup to match the new physical displays.
+3. **Dependency Resolution**: It checks the host system for required packages (e.g., `waybar`, `rofi`, `kitty`) and handles the installation asynchronously.
 
 ---
 
-## 1. Universal Rice Packer Tool
-The Rice Packer is a utility designed to solve the "it works on my machine" problem for dotfiles. It maps hardware requirements (monitor resolutions, GPU drivers), resolves missing dependencies for the target system, and packages everything into a distributable `.rice` archive.
+## Usage
 
-### Features
-- **Concurrent Dependency Resolution**: Fast parallel checks for system dependencies.
-- **Hardware Mapping**: Generates mapping profiles for monitors and GPUs so rices translate perfectly across different hardware.
-- **Unified Archiving**: Packs configs into a standardized format with a `manifest.toml`.
-
-### Build Instructions
-You need Go installed on your system. To build the Rice Packer tool:
+### 1. Build the Tool
+Ensure you have Go installed, then clone and build:
 ```bash
 git clone https://github.com/Lohitakshexe/rice-packer.git
 cd rice-packer
 go build -o rice-packer main.go
 ```
 
-### Usage
-**Packing a Rice:**
-Create a `manifest.toml` defining your dependencies and config paths, then run:
+### 2. Pack a Rice
+To share your current setup, create a `manifest.toml` defining your dependencies and config paths, then run:
 ```bash
 ./rice-packer pack --config /path/to/manifest.toml --output MySetup.rice
 ```
+This generates a portable `MySetup.rice` file containing your configurations and hardware metadata.
 
-**Installing a Rice:**
-Take any `.rice` package and apply it to your system (this will check for missing dependencies and prompt to install them):
+### 3. Install a Rice
+To apply a downloaded `.rice` package to your system:
 ```bash
 ./rice-packer install --file MySetup.rice
 ```
+The installer will check for missing dependencies, translate hardware mappings, and safely apply the configurations.
 
 ---
 
-## 2. Base Hyprland Rice
-Inside the `base-hyprland-rice` directory, you'll find a sleek, modern, Catppuccin/Dark Neon inspired Hyprland configuration. It's meant to be a solid foundation that is completely error-free on the newest versions of Hyprland (v0.55+).
+## Included: Base Hyprland Rice
 
-### Components Included:
-- **Hyprland**: Modular config (animations, monitors, windowrules separated).
-- **Waybar**: Floating, rounded status bar.
-- **Kitty**: Themed terminal emulator.
-- **Rofi**: Centered application launcher.
-- **Hyprlock & Hypridle**: Native lock screen and idle daemon.
-- **Scripts**: Utility scripts for wallpapers (using `swww`) and locking.
+This repository also includes a `base-hyprland-rice` directory. This is a modular, Catppuccin/Dark Neon inspired Hyprland configuration (compatible with modern Hyprland v0.55+ syntax). 
 
-### How to Test Safely (Nested Mode)
-You can test this rice on your current system without overriding your personal `~/.config/` files by using a nested Wayland session and the `XDG_CONFIG_HOME` trick:
-
-```bash
-cd rice-packer/base-hyprland-rice
-XDG_CONFIG_HOME=$PWD Hyprland -c $PWD/hypr/hyprland.conf
-```
-*When the window opens, press `SUPER + Return` to launch the themed Kitty, and `SUPER + Space` for Rofi!*
-
-### How to Apply Permanently
-When you are ready to make this your permanent setup:
-1. Back up your current `~/.config` files.
-2. Copy the folders to your system:
-```bash
-cp -r base-hyprland-rice/hypr ~/.config/
-cp -r base-hyprland-rice/kitty ~/.config/
-cp -r base-hyprland-rice/waybar ~/.config/
-cp -r base-hyprland-rice/rofi ~/.config/
-```
-3. Restart Hyprland.
+It is provided as a clean, error-free foundation. You can use it as a perfect starting point to test the Rice Packer tool by creating a manifest for it and packing it into a distributable `.rice` file!
