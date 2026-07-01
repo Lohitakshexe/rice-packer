@@ -43,10 +43,4 @@ To apply a downloaded `.rice` package to your system:
 ```
 The installer will check for missing dependencies, translate hardware mappings, and safely apply the configurations.
 
----
 
-## Included: Base Hyprland Rice
-
-This repository also includes a `base-hyprland-rice` directory. This is a modular, Catppuccin/Dark Neon inspired Hyprland configuration (compatible with modern Hyprland v0.55+ syntax). 
-
-It is provided as a clean, error-free foundation. You can use it as a perfect starting point to test the Rice Packer tool by creating a manifest for it and packing it into a distributable `.rice` file!
