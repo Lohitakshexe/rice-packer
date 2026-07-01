@@ -1,0 +1,41 @@
+# Use the official Golang image for building and testing
+FROM golang:1.21-alpine
+
+# Install some common tools that might be used in a Linux environment
+RUN apk add --no-cache bash tree nano curl make git
+
+# Create a dummy user to simulate a real home directory
+RUN adduser -D -s /bin/bash tester
+USER tester
+WORKDIR /home/tester
+
+# Setup dummy dotfiles for testing
+RUN mkdir -p /home/tester/.config/kitty
+RUN echo "font_family Fira Code" > /home/tester/.config/kitty/kitty.conf
+
+RUN mkdir -p /home/tester/.config/hypr
+RUN echo "monitor=eDP-1,1920x1080@60,0x0,1" > /home/tester/.config/hypr/hyprland.conf
+RUN echo "exec-once = /home/tester/scripts/startup.sh" >> /home/tester/.config/hypr/hyprland.conf
+
+RUN mkdir -p /home/tester/scripts
+RUN echo "#!/bin/bash\necho 'hello'" > /home/tester/scripts/startup.sh
+RUN chmod +x /home/tester/scripts/startup.sh
+
+# Edge Case 1: Binary files (Simulate a JPG wallpaper)
+RUN mkdir -p /home/tester/.config/hypr/wallpapers
+# Create a valid tiny 1x1 JPEG file to ensure MIME detector sees it as binary
+RUN echo -e '\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00\xff\xdb\x00\x43\x00\x03\x02\x02\x02\x02\x02\x03\x02\x02\x02\x03\x03\x03\x03\x04\x06\x04\x04\x04\x04\x04\x08\x06\x06\x05\x06\x09\x08\x0a\x0a\x09\x08\x09\x09\x0a\x0c\x0f\x0c\x0a\x0b\x0e\x0b\x09\x09\x0d\x11\x0d\x0e\x0f\x10\x10\x11\x10\x0a\x0c\x12\x13\x12\x10\x13\x0f\x10\x10\x10\xff\xc0\x00\x0b\x08\x00\x01\x00\x01\x01\x01\x11\x00\xff\xc4\x00\x14\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x09\xff\xc4\x00\x14\x10\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xda\x00\x08\x01\x01\x00\x00\x3f\x00\x3f\xff\xd9' > /home/tester/.config/hypr/wallpapers/background.jpg
+
+# Edge Case 2: Deep nesting and weird characters
+RUN mkdir -p "/home/tester/.config/hypr/weird folder name/very/deep"
+RUN echo "hello" > "/home/tester/.config/hypr/weird folder name/very/deep/file with spaces.txt"
+
+# Edge Case 3: Symlinks
+RUN ln -s /home/tester/.config/kitty/kitty.conf /home/tester/.config/hypr/kitty_link.conf
+
+# Create a workspace directory for the tool
+RUN mkdir -p /home/tester/workspace
+WORKDIR /home/tester/workspace
+
+# Keep the container running for interactive access
+CMD ["/bin/bash"]

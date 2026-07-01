@@ -1,0 +1,11 @@
+name = "Tester_Rice"
+author = "RicePacker"
+version = "1.0"
+display_server = "wayland"
+window_manager = "hyprland"
+configs = ["kitty", "hypr"]
+dependencies = ["missing-package", "fake-package"]
+
+[hardware]
+network = "wlan0"
+monitor = "eDP-1"
